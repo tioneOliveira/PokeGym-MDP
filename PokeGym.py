@@ -13,7 +13,7 @@ used_types = ["Normal", "Fire", "Water", "Grass", "Flying", "Poison"]
 # - 'resistances': move types que são POUCO EFETIVOS contra esse tipo (x0.5)
 # - 'immunities': move types que não afetam esse tipo (x0)
 pokemon_types = {
-    "Normal":   {"weaknesses": [],            "resistances": [""], "immunities": []},
+    "Normal":   {"weaknesses": [],            "resistances": [], "immunities": []},
     "Fire":   {"weaknesses": ["Water"],       "resistances": ["Grass"], "immunities": []},
     "Water":  {"weaknesses": ["Grass"],       "resistances": ["Fire"],  "immunities": []},
     "Grass":  {"weaknesses": ["Fire"],        "resistances": ["Water"], "immunities": []},
@@ -204,7 +204,7 @@ class PokemonEnv(gym.Env):
         ])
         self.team2 = Team([
             Pokemon("Charizard", "Fire", "Flying", 312, 219, 207, 221, 251, [ember, quick_attack, ember, tackle]),
-            Pokemon("Blastoise", "Water", "monotype", 314, 217, 251, 221, 207, [water_gun, tackle, water_gun, tackle]),
+            Pokemon("Blastoise", "Water", "monotype", 314, 217, 251, 221, 207, [water_gun, quick_attack, water_gun, tackle]),
             Pokemon("Venusaur", "Grass", "Poison", 316, 215, 217, 251, 211, [vine_whip, quick_attack, vine_whip, tackle])
         ])
 
@@ -254,7 +254,7 @@ class PokemonEnv(gym.Env):
         if self.team1.active.fainted:
             valid_switches = self._valid_agent_switches()
             if not valid_switches:
-                reward -= 50
+                reward -= 100
                 self.total_losses += 1
                 self.done = True
                 info["forced_switch"] = True
@@ -346,7 +346,7 @@ class PokemonEnv(gym.Env):
                     if alive_enemy:
                         self.team2.switch(random.choice(alive_enemy))
                     else:
-                        reward += 50
+                        reward += 100
                         self.total_wins += 1
                         self.done = True
                         self.total_damage_dealt += self.episode_damage_dealt
@@ -494,9 +494,7 @@ for ep in range(episodes):
             f"Pouco efetivo: {info['not_very_effective']} | Sobreviventes: {sum(not p.fainted for p in env.team1.pokemons)}")
 
 
-# ========================
-# Plots simples para visualizar
-# ========================
+
 total_episodes = len(wins_history)
 # taxa de vitórias cumulativa (em %)
 win_rate = [100 * w / (w + l) if (w + l) > 0 else 0 for w, l in zip(wins_history, losses_history)]
