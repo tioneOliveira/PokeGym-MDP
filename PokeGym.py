@@ -5,7 +5,7 @@ import numpy as np
 from collections import Counter
 import matplotlib.pyplot as plt
 
-# Aqui definimos apenas os tipos utilizados no experimento para reduzir dimensionalidade.
+# Tipos utilizados no experimento para reduzir dimensionalidade.
 used_types = ["Normal", "Fire", "Water", "Grass", "Flying", "Poison"]
 
 # Para cada tipo (defensor), listamos:
@@ -13,7 +13,7 @@ used_types = ["Normal", "Fire", "Water", "Grass", "Flying", "Poison"]
 # - 'resistances': move types que são POUCO EFETIVOS contra esse tipo (x0.5)
 # - 'immunities': move types que não afetam esse tipo (x0)
 pokemon_types = {
-    "Normal":   {"weaknesses": [],            "resistances": [], "immunities": []},
+    "Normal": {"weaknesses": [],              "resistances": [], "immunities": []},
     "Fire":   {"weaknesses": ["Water"],       "resistances": ["Grass"], "immunities": []},
     "Water":  {"weaknesses": ["Grass"],       "resistances": ["Fire"],  "immunities": []},
     "Grass":  {"weaknesses": ["Fire"],        "resistances": ["Water"], "immunities": []},
