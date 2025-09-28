@@ -84,11 +84,14 @@ class PokeLightEnv(gym.Env):
     
     # MÉTODOS DE JOGO ===================================================================================================== 
     def step(self, action):
-        self.init_pygame()
+        # só inicia pygame se for renderizar
+        if self.render_mode == "human":
+            self.init_pygame()
 
         # Ação do agente
         self.tipo_agente = int(action)
-        self.animacao_ataque("agente")
+        if self.render_mode == "human":
+            self.animacao_ataque("agente")
         dano_agente, msg = self.calcular_dano(self.tipo_agente, self.tipo_oponente)
         self.vida_oponente = max(self.vida_oponente - dano_agente, 0)
 
@@ -109,10 +112,11 @@ class PokeLightEnv(gym.Env):
 
         # Oponente ataca
         dano_oponente, msg_op = self.calcular_dano(self.tipo_oponente, self.tipo_agente)
-        self.animacao_ataque("oponente")
+        if self.render_mode == "human":
+            self.animacao_ataque("oponente")
         # Oponente baseado em RNG
         next_pokemon = int(self.np_random.integers(0, 6))
-        if next_pokemon != self.tipo_oponente:
+        if self.render_mode == "human" and next_pokemon != self.tipo_oponente:
             self.animacao_troca("oponente", next_pokemon)
         self.tipo_oponente = next_pokemon
         self.vida_agente = self.vida_agente - dano_oponente
