@@ -1,11 +1,8 @@
-import gymnasium as gym
-from gymnasium import spaces
 import numpy as np
-import pygame
 import time
 import csv
 import matplotlib.pyplot as plt
-from PokeLight import PokeLightEnv
+from PokeLightEnv import PokeLightEnv
 
 class MCAgent:
     def __init__(self, env, max_hp, epsilon=0.1, gamma=1.0):
@@ -123,7 +120,7 @@ class MCAgent:
                 writer.writerow(self.policy[s])
         print(f"Política MC exportada para {filename}")
 
-    def plot_metrics(self):
+    def plot_winrate(self):
         # média acumulada winrate
         wins_cumavg = np.cumsum(self.wins_log) / np.arange(1, len(self.wins_log) + 1)
 
@@ -136,22 +133,51 @@ class MCAgent:
 
         plt.tight_layout()
         plt.show()
+        
+    def plot_rewardAVGCumSum(self):
+        # média acumulada reward
+        reward_cumavg = np.cumsum(self.rewards_log) / np.arange(1, len(self.rewards_log) + 1)
+
+        plt.figure(figsize=(8,5))
+
+        plt.plot(reward_cumavg)
+        plt.title("Recompensa Acumulada")
+        plt.xlabel("Episódios")
+        plt.ylabel("Média Cumulativa de Recompensa")
+
+        plt.tight_layout()
+        plt.show()
+        
+    def plot_reward(self):
+        # média acumulada reward
+        reward_per_ep = self.rewards_log
+
+        plt.figure(figsize=(8,5))
+
+        plt.plot(reward_per_ep)
+        plt.title("Recompensa por Episódio")
+        plt.xlabel("Episódios")
+        plt.ylabel("Recompensa")
+
+        plt.tight_layout()
+        plt.show()
+
 
 
 if __name__ == "__main__":
-    max_hp = 20
+    max_hp = 10
 
     # treino sem render
     env = PokeLightEnv(render_mode=None, max_hp=max_hp, fps=30)
     mc_agent = MCAgent(env, max_hp=max_hp, epsilon=0.1, gamma=1.0)
-    mc_agent.train(num_episodes=4000)
+    mc_agent.train(num_episodes=1000)
     mc_agent.export_policy_to_csv("mc_policy.csv")
     env.close()
 
-    '''
     # plot métricas
-    mc_agent.plot_metrics()
-    '''
+    mc_agent.plot_winrate()
+    mc_agent.plot_reward()
+    mc_agent.plot_rewardAVGCumSum()
 
     # teste com render
     env = PokeLightEnv(render_mode="human", max_hp=max_hp, fps=30)
