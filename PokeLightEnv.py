@@ -8,9 +8,7 @@ import csv
 class PokeLightEnv(gym.Env):
     metadata = {"render_modes": ["human"]}
     # MÉTODOS DE AMBIENTE =================================================================================================
-    def __init__(self, render_mode: str, max_hp: int, fps: int ):
-        super().__init__()
-        
+    def __init__(self, render_mode: str, max_hp: int, fps: int ):      
         self.max_hp = max_hp
         
         # ações disponíveis, atacar com um dos 6 pokémon
@@ -173,7 +171,7 @@ class PokeLightEnv(gym.Env):
         if oponente_sprite is None:
             oponente_sprite = self.sprites_oponente[self.tipo_oponente]
         if agente_pos is None:
-            agente_pos = [120, 230]
+            agente_pos = [120, 228]
         if oponente_pos is None:
             oponente_pos = [610, 90]
 
@@ -189,13 +187,12 @@ class PokeLightEnv(gym.Env):
         self.render_texto(f"{self.vida_oponente}/{self.max_hp}", 280, 72)
 
         # mensagens de batalha
-        y_offset = 480
+        y_offset = 475
         for i, line in enumerate(self.battle_log.split("\n")):
             shadow_text = self.font.render(line, True, (0, 0, 0))
             self.screen.blit(shadow_text, (52, y_offset + i * 30 + 2))
             main_text = self.font.render(line, True, (255, 255, 255))
             self.screen.blit(main_text, (50, y_offset + i * 30))
-
         pygame.display.flip()
         self.clock.tick(self.fps)
         
@@ -203,7 +200,7 @@ class PokeLightEnv(gym.Env):
     def animacao_ataque(self, alvo="agente", deslocamento=20, steps=5):
         if alvo == "agente":
             sprite = self.sprites_agente[self.tipo_agente]
-            pos = [120, 230]
+            pos = [120, 228]
         else:
             sprite = self.sprites_oponente[self.tipo_oponente]
             pos = [610, 90]
@@ -224,7 +221,7 @@ class PokeLightEnv(gym.Env):
     def animacao_troca(self, alvo="agente", novo_tipo=None, steps=10):
         if alvo == "agente":
             sprite_atual = self.sprites_agente[self.tipo_agente]
-            pos_base = [120, 230]
+            pos_base = [120, 228]
         else:
             sprite_atual = self.sprites_oponente[self.tipo_oponente]
             pos_base = [610, 90]
