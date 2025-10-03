@@ -165,12 +165,12 @@ class MCAgent:
 
 
 if __name__ == "__main__":
-    max_hp = 10
+    max_hp = 20
 
     # treino sem render
     env = PokeLightEnv(render_mode=None, max_hp=max_hp, fps=30)
-    mc_agent = MCAgent(env, max_hp=max_hp, epsilon=0.1, gamma=1.0)
-    mc_agent.train(num_episodes=1000)
+    mc_agent = MCAgent(env, max_hp=max_hp, epsilon=0.1, gamma=0.9)
+    mc_agent.train(num_episodes=3000)
     mc_agent.export_policy_to_csv("mc_policy.csv")
     env.close()
 

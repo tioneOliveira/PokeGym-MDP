@@ -97,11 +97,11 @@ class PokeLightEnv(gym.Env):
 
         # Recompensa baseada na efetividade
         if dano_agente == 4:
-            reward = 2
+            reward = 5
         elif dano_agente == 2:
             reward = -5
         else:
-            reward = 0.0
+            reward = -3
 
         # Checa vitória do agente
         if self.vida_oponente <= 0:
