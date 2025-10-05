@@ -1,0 +1,6 @@
+gymnasium==1.2.1
+numpy==2.3.3
+pandas==2.3.3
+pokegym==0.2.0
+matplotlib==3.10.6
+pygame==2.6.1
