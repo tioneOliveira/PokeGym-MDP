@@ -158,11 +158,20 @@ class VIAgente:
 
 if __name__ == "__main__":
     max_hp = 20
-    env = PokeLightEnv(render_mode=None, max_hp=max_hp, fps=30)
-
+    
+    env = PokeLightEnv(render_mode="human", max_hp=max_hp, fps=30)
     vi_agent = VIAgente(env, max_hp=max_hp)
+    vi_agent.run_value_iteration()
+    reward = vi_agent.run_policy(max_steps=100)
+    
+    print("Recompensa acumulada (VI):", reward)
+    env.close()
+    
+    # env = PokeLightEnv(render_mode=None, max_hp=max_hp, fps=30)
 
-    discount_factors = [0.5, 0.7, 0.9, 0.99]
-    thetas = [1e-2, 1e-4, 1e-6]
+    # vi_agent = VIAgente(env, max_hp=max_hp)
+    
+    # discount_factors = [0.5, 0.7, 0.9, 0.99]
+    # thetas = [1e-2, 1e-4, 1e-6]
 
-    vi_agent.testar_hiperparametros(discount_factors, thetas, max_hp=max_hp, max_steps=100)
+    # vi_agent.testar_hiperparametros(discount_factors, thetas, max_hp=max_hp, max_steps=100)
