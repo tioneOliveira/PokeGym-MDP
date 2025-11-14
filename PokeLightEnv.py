@@ -13,15 +13,15 @@ class PokeLightEnv(gym.Env):
 
         # espaço de observação
         self.vida_inicial = max_hp
-        obs_low  = np.zeros(14, dtype=np.float32)
-        obs_high = np.ones(14, dtype=np.float32)
+        obs_low  = np.zeros(24, dtype=np.float32)
+        obs_high = np.ones(24, dtype=np.float32)
 
         self.observation_space = spaces.Box(
             low=obs_low,
             high=obs_high,
-            shape=(14,),
+            shape=(24,),
             dtype=np.float32
-        )
+)
 
         # pygame
         self.fps = fps
@@ -78,15 +78,20 @@ class PokeLightEnv(gym.Env):
         return self._get_obs(), {}
     
     def _get_obs(self):
-        obs = np.array([
-            self.tipo_agente / 5,
-            self.tipo_oponente / 5,
-            * (np.array(self.vida_agente) / self.max_hp),
-            * (np.array(self.vida_oponente) / self.max_hp)
-        ], dtype=np.float32)
+        obs = np.concatenate([
+            self._one_hot(self.tipo_agente),                # 6
+            self._one_hot(self.tipo_oponente),              # 6
+            np.array(self.vida_agente) / self.max_hp,       # 6
+            np.array(self.vida_oponente) / self.max_hp      # 6
+        ]).astype(np.float32)
 
         return obs
     
+    def _one_hot(self, idx):
+        v = np.zeros(6, dtype=np.float32)
+        v[idx] = 1.0
+        return v
+
     def step(self, action):
         reward = 0
         # só inicia pygame se for renderizar
