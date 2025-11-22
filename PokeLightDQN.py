@@ -1,4 +1,3 @@
-# dqn_pokelight.py
 import random
 import collections
 import math
@@ -87,25 +86,25 @@ class DQNAgente:
         self.train_start = train_start
         self.steps_done = 0
 
-    # --- helper para extrair ações válidas do obs (já que env não fornece info["valid_actions"]) ---
+    # helper para extrair ações válidas do obs
     def get_valid_actions_from_obs(self, obs: np.ndarray):
         # obs layout: 0-5 one-hot tipo_agente, 6-11 one-hot tipo_oponente,
-        # 12-17 hp_agente (normalized), 18-23 hp_oponente (normalized)
+        # 12-17 hp_agente, 18-23 hp_oponente
         agent_onehot = obs[0:6]
         agent_idx = int(np.argmax(agent_onehot))
         agent_hps = obs[12:18] * self.max_hp
         valid_actions = []
-        # ataque possível se hp do pok ativo > 0
+        # ataque possível se hp do poke ativo > 0
         if agent_hps[agent_idx] > 0.0:
             valid_actions.append(0)
-        # swaps: indexes onde hp > 0 e != ativo => codifica como 1..6
+        
         for idx in range(6):
             if agent_hps[idx] > 0 and idx != agent_idx:
                 valid_actions.append(idx + 1)
         return valid_actions
 
     def select_action(self, state: np.ndarray, epsilon: float, valid_actions=None):
-        # Se nenhuma ação é permitida
+        # se nenhuma ação é permitida
         if valid_actions is not None and len(valid_actions) == 0:
             return None
 
@@ -141,10 +140,10 @@ class DQNAgente:
         # Q(s,a)
         q_values = self.policy_net(state_batch).gather(1, action_batch)
 
-        # Double DQN target: actions from policy_net, values from target_net
+        
         with torch.no_grad():
-            next_actions = self.policy_net(next_state_batch).argmax(dim=1, keepdim=True)  # shape [B,1]
-            next_q_values = self.target_net(next_state_batch).gather(1, next_actions)  # shape [B,1]
+            next_actions = self.policy_net(next_state_batch).argmax(dim=1, keepdim=True)
+            next_q_values = self.target_net(next_state_batch).gather(1, next_actions)
             target_q = reward_batch + (1.0 - done_batch) * (self.gamma * next_q_values)
 
         loss = nn.functional.smooth_l1_loss(q_values, target_q)
@@ -157,16 +156,16 @@ class DQNAgente:
         return float(loss.item())
 
     def preprocess_obs(self, obs):
-        # garante float32 numpy
         return np.array(obs, dtype=np.float32)
 
     def _extract_hp(self, state):
-        # state vetor length 24: hp agente 12-17, hp oponente 18-23 (normalizados)
+        # hps normalizados
         state = np.array(state, dtype=np.float32)
         agent_hp = state[12:18] * self.max_hp
         opp_hp = state[18:24] * self.max_hp
         return agent_hp, opp_hp
 
+    # hiperparametros
     def train(
         self,
         num_episodes=2000,
@@ -200,27 +199,27 @@ class DQNAgente:
 
                 done = bool(terminated or truncated)
 
-                # Reward shaping (densificação) usando diferença de HP (sem alterar o ambiente)
+                # Reward shaping usando diferença de HP 
                 _, opp_hp_before = self._extract_hp(state)
                 _, opp_hp_after = self._extract_hp(next_state)
-                delta_opp_hp = float(np.sum(opp_hp_before) - np.sum(opp_hp_after))  # positivo se reduzimos hp do oponente
+                delta_opp_hp = float(np.sum(opp_hp_before) - np.sum(opp_hp_after))
 
                 agent_hp_before, _ = self._extract_hp(state)
                 agent_hp_after, _ = self._extract_hp(next_state)
-                delta_agent_hp = float(np.sum(agent_hp_before) - np.sum(agent_hp_after))  # positivo se agente perdeu hp
+                delta_agent_hp = float(np.sum(agent_hp_before) - np.sum(agent_hp_after))
 
-                # escala do shaping: op reduzido dá +0.5 por HP perdido; agente perde HP dá -0.7 por HP perdido
+                # escala do shaping
                 shaped = 0.5 * delta_opp_hp - 0.7 * delta_agent_hp
 
-                # combine com reward do env (mantemos o reward do env inteiro, mas o normalizamos suavemente)
+                # combina
                 stored_reward = reward + shaped
 
-                # push
+                
                 self.replay.push(state, action, stored_reward, next_state, float(done))
 
                 state = next_state
                 valid_actions = next_valid_actions
-                ep_reward += reward  # preserve original reward for reporting
+                ep_reward += reward
 
                 if len(self.replay) >= self.train_start:
                     losses.append(self.optimize_model())
