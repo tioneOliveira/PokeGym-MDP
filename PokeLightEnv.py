@@ -215,16 +215,16 @@ class PokeLightEnv(gym.Env):
                         return self._get_obs(), reward, True, False, {}
 
 
-        print("Vida Agente: " + str(self.vida_agente))
-        print("Ativo Agente: " + str(self.tipo_agente))
-        print("Acao Agente: " + str(action))
-        print("------------------------")
-        print("Vida Oponente: " + str(self.vida_oponente))
-        print("Ativo Oponente: " + str(self.tipo_oponente))
-        print("Acao Oponente: " + str(op_action))
-        print("||||||||||||||||||||||||")
-        print(self._get_obs())
-        print("========================")
+        #print("Vida Agente: " + str(self.vida_agente))
+        #print("Ativo Agente: " + str(self.tipo_agente))
+        #print("Acao Agente: " + str(action))
+        #print("------------------------")
+        #print("Vida Oponente: " + str(self.vida_oponente))
+        #print("Ativo Oponente: " + str(self.tipo_oponente))
+        #print("Acao Oponente: " + str(op_action))
+        #print("||||||||||||||||||||||||")
+        #print(self._get_obs())
+        #print("========================")
         
         
         return self._get_obs(), reward, terminated, truncated, {}
