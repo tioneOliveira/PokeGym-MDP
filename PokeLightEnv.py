@@ -109,6 +109,7 @@ class PokeLightEnv(gym.Env):
         # ataque
             if self.vida_agente[self.tipo_agente] == 0:
                 reward = -3
+                terminated = True
                 return self._get_obs(), reward, terminated, truncated, {}
             if self.render_mode == "human":
                 self.animacao_ataque("agente")
@@ -135,7 +136,8 @@ class PokeLightEnv(gym.Env):
             # Checa vitória imediata do agente
             if np.all(np.array(self.vida_oponente) == 0):
                 reward += 100
-                return self._get_obs(), reward, True, False, {}
+                terminated = True
+                return self._get_obs(), reward, terminated, truncated, {}
 
 
         else:
@@ -145,6 +147,7 @@ class PokeLightEnv(gym.Env):
             # validações: pokémon vivo e não trocar para o mesmo
             if target < 0 or target >= 6 or self.vida_agente[target] == 0 or target == self.tipo_agente:
                 reward = -3
+                terminated = True
                 return self._get_obs(), reward, terminated, truncated, {}
 
 
@@ -165,7 +168,8 @@ class PokeLightEnv(gym.Env):
         # se não houver ações válidas, o oponente está derrotado
         if len(valid_op_actions) == 0:
             reward += 100
-            return self._get_obs(), reward, True, False, {}
+            terminated = True
+            return self._get_obs(), reward, terminated, truncated, {}
 
 
         # escolhe ação do oponente
@@ -190,7 +194,8 @@ class PokeLightEnv(gym.Env):
             # checa derrota do agente
             if np.all(np.array(self.vida_agente) == 0):
                 reward -= 100
-                return self._get_obs(), reward, True, False, {}
+                terminated = True
+                return self._get_obs(), reward, terminated, truncated, {}
 
 
         else:
@@ -212,7 +217,8 @@ class PokeLightEnv(gym.Env):
                         )
                     if np.all(np.array(self.vida_agente) == 0):
                         reward -= 100
-                        return self._get_obs(), reward, True, False, {}
+                        terminated = True
+                        return self._get_obs(), reward, terminated, truncated, {}
 
 
         #print("Vida Agente: " + str(self.vida_agente))
